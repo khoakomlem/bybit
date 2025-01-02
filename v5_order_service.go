@@ -264,6 +264,8 @@ type V5GetOrder struct {
 	Qty                string      `json:"qty"`
 	StopLoss           string      `json:"stopLoss"`
 	TriggerBy          TriggerBy   `json:"triggerBy"`
+	TPLimitPrice       string      `json:"tpLimitPrice"`
+	SLLimitPrice       string      `json:"slLimitPrice"`
 }
 
 // GetOpenOrders :

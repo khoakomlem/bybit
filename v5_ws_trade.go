@@ -153,7 +153,7 @@ func (s *V5WebsocketTradeService) Run() error {
 // Ping :
 func (s *V5WebsocketTradeService) Ping() error {
 	// NOTE: It appears that two messages need to be sent.
-	// REF: https://github.com/hirokisan/bybit/pull/127#issuecomment-1537479346
+	// REF: https://github.com/khoakomlem/bybit/pull/127#issuecomment-1537479346
 	if err := s.writeControl(websocket.PingMessage, nil); err != nil {
 		return err
 	}

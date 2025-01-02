@@ -1,6 +1,6 @@
-[![Go Report Card](https://goreportcard.com/badge/github.com/hirokisan/bybit)](https://goreportcard.com/report/github.com/hirokisan/bybit)
-[![golangci-lint](https://github.com/hirokisan/bybit/actions/workflows/golangci-lint.yml/badge.svg)](https://github.com/hirokisan/bybit/actions/workflows/golangci-lint.yml)
-[![test](https://github.com/hirokisan/bybit/actions/workflows/test.yml/badge.svg)](https://github.com/hirokisan/bybit/actions/workflows/test.yml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/khoakomlem/bybit)](https://goreportcard.com/report/github.com/khoakomlem/bybit)
+[![golangci-lint](https://github.com/khoakomlem/bybit/actions/workflows/golangci-lint.yml/badge.svg)](https://github.com/khoakomlem/bybit/actions/workflows/golangci-lint.yml)
+[![test](https://github.com/khoakomlem/bybit/actions/workflows/test.yml/badge.svg)](https://github.com/khoakomlem/bybit/actions/workflows/test.yml)
 
 # bybit
 
@@ -11,7 +11,7 @@ bybit is a bybit client for the Go programming language.
 ### REST API
 
 ```golang
-import "github.com/hirokisan/bybit/v2"
+import "github.com/khoakomlem/bybit/v2"
 
 client := bybit.NewClient().WithAuth("your api key", "your api secret")
 res, err := client.Future().InversePerpetual().Balance(bybit.CoinBTC)
@@ -21,26 +21,28 @@ res, err := client.Future().InversePerpetual().Balance(bybit.CoinBTC)
 ### WebSocket API
 
 for single use
+
 ```golang
-import "github.com/hirokisan/bybit/v2"
+import "github.com/khoakomlem/bybit/v2"
 
 wsClient := bybit.NewWebsocketClient()
 svc, err := wsClient.Spot().V1().PublicV1()
 if err != nil {
-	return err
+ return err
 }
 _, err = svc.SubscribeTrade(bybit.SymbolSpotBTCUSDT, func(response bybit.SpotWebsocketV1PublicV1TradeResponse) error {
-	// do as you want
+ // do as you want
 })
 if err != nil {
-	return err
+ return err
 }
 svc.Start(context.Background())
 ```
 
 for multiple use
+
 ```golang
-import "github.com/hirokisan/bybit/v2"
+import "github.com/khoakomlem/bybit/v2"
 
 wsClient := bybit.NewWebsocketClient()
 
@@ -48,66 +50,67 @@ executors := []bybit.WebsocketExecutor{}
 
 svcRoot := wsClient.Spot().V1()
 {
-	svc, err := svcRoot.PublicV1()
-	if err != nil {
-		return err
-	}
-	_, err = svc.SubscribeTrade(bybit.SymbolSpotBTCUSDT, func(response bybit.SpotWebsocketV1PublicV1TradeResponse) error {
-		// do as you want
-	})
-	if err != nil {
-		return err
-	}
-	executors = append(executors, svc)
+ svc, err := svcRoot.PublicV1()
+ if err != nil {
+  return err
+ }
+ _, err = svc.SubscribeTrade(bybit.SymbolSpotBTCUSDT, func(response bybit.SpotWebsocketV1PublicV1TradeResponse) error {
+  // do as you want
+ })
+ if err != nil {
+  return err
+ }
+ executors = append(executors, svc)
 }
 {
-	svc, err := svcRoot.PublicV2()
-	if err != nil {
-		return err
-	}
-	_, err = svc.SubscribeTrade(bybit.SymbolSpotBTCUSDT, func(response bybit.SpotWebsocketV1PublicV2TradeResponse) error {
-		// do as you want
-	})
-	if err != nil {
-		return err
-	}
-	executors = append(executors, svc)
+ svc, err := svcRoot.PublicV2()
+ if err != nil {
+  return err
+ }
+ _, err = svc.SubscribeTrade(bybit.SymbolSpotBTCUSDT, func(response bybit.SpotWebsocketV1PublicV2TradeResponse) error {
+  // do as you want
+ })
+ if err != nil {
+  return err
+ }
+ executors = append(executors, svc)
 }
 
 wsClient.Start(context.Background(), executors)
 ```
 
 V5 usage
+
 ```golang
-import "github.com/hirokisan/bybit/v2"
+import "github.com/khoakomlem/bybit/v2"
 
 wsClient := bybit.NewWebsocketClient().WithBaseURL("wss://stream-testnet.bybit.com").WithAuth("key", "secret")
 svc, err := wsClient.V5().Private()
 if err != nil {
-	// handle dialing error
+ // handle dialing error
 }
 
 err = svc.Subscribe()
 if err != nil {
-	// handle subscription error
+ // handle subscription error
 }
 
 err = svc.SubscribePosition(func(position bybit.V5WebsocketPrivatePositionResponse) error {
-	// handle new position information
+ // handle new position information
 })
 if err != nil {
-	// handle registration error
+ // handle registration error
 }
 
 errHandler := func(isWebsocketClosed bool, err error) {
-	// Connection issue (timeout, etc.).
+ // Connection issue (timeout, etc.).
 
-	// At this point, the connection is dead and you must handle the reconnection yourself
+ // At this point, the connection is dead and you must handle the reconnection yourself
 }
 
 err = svc.Start(context.Background(), errHandler)
 if err != nil {
-	// handle reconnection (ping issue, etc.). Probably can be ignored as the errHandler would be notified too
+ // handle reconnection (ping issue, etc.). Probably can be ignored as the errHandler would be notified too
 }
 ```
 
@@ -182,7 +185,6 @@ The following API endpoints have been implemented
 #### User
 
 - [`/v5/user/query-api` Get API Key Information](https://bybit-exchange.github.io/docs/v5/user/apikey-info)
-
 
 ### [deprecated] REST API
 
@@ -393,6 +395,6 @@ See below
 
 ## Contributing
 
-I would like to cover Bybit API and contributions are always welcome. The calling pattern is established, so adding new methods is relatively straightforward. See some PRs like https://github.com/hirokisan/bybit/pull/44.
+I would like to cover Bybit API and contributions are always welcome. The calling pattern is established, so adding new methods is relatively straightforward. See some PRs like <https://github.com/khoakomlem/bybit/pull/44>.
 
 To submit issues, PRs, and every other help is welcome.
