@@ -266,6 +266,7 @@ type V5GetOrder struct {
 	TriggerBy          TriggerBy   `json:"triggerBy"`
 	TPLimitPrice       string      `json:"tpLimitPrice"`
 	SLLimitPrice       string      `json:"slLimitPrice"`
+	TpSlMode           TpSlMode    `json:"tpslMode"`
 }
 
 // GetOpenOrders :
