@@ -14,6 +14,7 @@ type V5OrderServiceI interface {
 	CancelOrder(V5CancelOrderParam) (*V5CancelOrderResponse, error)
 	GetOpenOrders(V5GetOpenOrdersParam) (*V5GetOrdersResponse, error)
 	CancelAllOrders(V5CancelAllOrdersParam) (*V5CancelAllOrdersResponse, error)
+	CancelBatchOrders(V5CancelBatchOrdersParam) (*V5CancelBatchOrdersResponse, error)
 	GetHistoryOrders(V5GetHistoryOrdersParam) (*V5GetOrdersResponse, error)
 }
 
@@ -344,6 +345,42 @@ type V5CancelAllOrdersResult struct {
 	Spot                *V5CancelAllOrdersSpotResult
 }
 
+type CancelBatchOrdersRequest struct {
+	Symbol SymbolV5 `json:"symbol,omitempty"`
+
+	OrderID     *string `json:"orderId,omitempty"`
+	OrderLinkID *string `json:"orderLinkId,omitempty"`
+}
+
+// V5CancelAllOrdersParam :
+// If you pass multiple of these params, the system will process one of param, which priority is symbol > baseCoin > settleCoin.
+type V5CancelBatchOrdersParam struct {
+	Category CategoryV5                 `json:"category"`
+	Request  []CancelBatchOrdersRequest `json:"request"`
+}
+
+func (p V5CancelBatchOrdersParam) validate() error {
+	if p.Category == CategoryV5Linear || p.Category == CategoryV5Inverse {
+		for _, r := range p.Request {
+			if r.OrderID == nil && r.OrderLinkID == nil {
+				return fmt.Errorf("orderId or orderLinkId must be passed")
+			}
+		}
+	}
+	return nil
+}
+
+// V5CancelBatchOrdersResponse :
+type V5CancelBatchOrdersResponse struct {
+	CommonV5Response
+	// Result []V5CancelBatchOrdersResult `json:"result"`
+}
+
+// type V5CancelBatchOrdersResult struct {
+// 	LinearInverseOption *V5CancelAllOrdersLinearInverseOptionResult
+// 	Spot                *V5CancelAllOrdersSpotResult
+// }
+
 // UnmarshalJSON :
 func (r *V5CancelAllOrdersResult) UnmarshalJSON(data []byte) error {
 	if err := json.Unmarshal(data, &r.LinearInverseOption); err != nil {
@@ -382,6 +419,26 @@ func (s *V5OrderService) CancelAllOrders(param V5CancelAllOrdersParam) (*V5Cance
 	}
 
 	if err := s.client.postV5JSON("/v5/order/cancel-all", body, &res); err != nil {
+		return &res, err
+	}
+
+	return &res, nil
+}
+
+// CancelBatchOrders :
+func (s *V5OrderService) CancelBatchOrders(param V5CancelBatchOrdersParam) (*V5CancelBatchOrdersResponse, error) {
+	var res V5CancelBatchOrdersResponse
+
+	if err := param.validate(); err != nil {
+		return nil, fmt.Errorf("validate param: %w", err)
+	}
+
+	body, err := json.Marshal(param)
+	if err != nil {
+		return &res, fmt.Errorf("json marshal: %w", err)
+	}
+
+	if err := s.client.postV5JSON("/v5/order/cancel-batch", body, &res); err != nil {
 		return &res, err
 	}
 
